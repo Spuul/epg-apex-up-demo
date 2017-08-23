@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>EPG parser</title>
+    <style>
+      body {
+        padding: 50px;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+td,
+th {
+  text-align: left;
+  padding: .4em;
+}
+    </style>
+  </head>
+  <body>
+    <h1>λ Apex Up demo</h1>
+    {{if .Name}}
+      <p>Uploaded a <strong>{{.Size | humanize_bytes}}</strong> sized <strong>{{.Type}}</strong> file named <strong>{{.Name}}</strong>.</p>
+	  <table><thead><tr><th>Id</th><th>Title</th><th>Description</th><th>Series</th><th>Category</th><th>Start</th><th>End</th><th>Duration</th></tr></thead>
+		<tbody>
+		  {{ range .EPGtv.EPGprogramme -}}<tr>
+			  <td>{{ .Attr_id }}</td>
+			  <td>{{ .EPGtitle.Text }}</td>
+			  <td>{{ .EPGdesc.Text }}</td>
+			  {{if .EPGseries}}
+			  <td>S{{ .EPGseries.EPGseason_num.Text }}E{{ .EPGseries.EPGepisode_num.Text }}</td>
+			  {{else}}
+			  <td>-</td>
+			  {{end}}
+			  <td>{{ .EPGcategory.Text }}</td>
+			  <td>{{ .Start.Format "15:04:05" }}</td>
+			  <td>{{ .Stop.Format "15:04:05" }}</td>
+			  <td>{{ .Stop.Time.Sub .Start.Time }}</td>
+		  </tr>
+{{ end }}
+	</tbody>
+	  </table>
+    {{else}}
+      <p>Upload an EPG XML file.</p>
+    <form action="submit" method="post" enctype="multipart/form-data">
+      <input type="file" name="xml" accept="text/xml">
+      <input type="submit" value="Upload">
+    </form>
+    {{end}}
+  </body>
+</html>
